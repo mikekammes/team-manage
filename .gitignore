@@ -3,3 +3,4 @@ config.codekit
 db.sqlite
 *.pyc
 .sass-cache/
+.gitignore
