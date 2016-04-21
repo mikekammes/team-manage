@@ -1,3 +1,5 @@
 .idea/
 config.codekit
 db.sqlite
+*.pyc
+.sass-cache/
