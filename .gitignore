@@ -1,4 +1,5 @@
 .idea/
+.db.sqlite
 config.codekit
 db.sqlite
 *.pyc
