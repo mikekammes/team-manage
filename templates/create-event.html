@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">
+                {{ form.date.label }}{{ form.date() }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">
+                {{ form.location.label }}{{ form.location() }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">{{ form.time.label }}{{ form.time() }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">{{ form.eventType.label }}{{ form.eventType() }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 pull-right">{{ form.submit }}</div>
+        </div>
+    </form>
+{% endblock %}
