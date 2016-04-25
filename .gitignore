@@ -2,3 +2,5 @@
 .db.sqlite
 config.codekit
 .gitignore
+.sass-cache/
+static/bower_components/custom.css.map
