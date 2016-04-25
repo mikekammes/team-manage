@@ -3,4 +3,4 @@
 config.codekit
 .gitignore
 .sass-cache/
-static/bower_components/custom.css.map
+static/custom.css.map
