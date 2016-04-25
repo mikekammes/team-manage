@@ -38,3 +38,16 @@ def add_event(team_id, event_type, date_time, location):
                                   'location': location})
     g.db.commit()
     return cursor.rowcount
+
+
+def add_team(team_name, user_id):
+    query = '''
+        INSERT INTO Team ( Name ) VALUES (:team_name)
+        '''
+    # Insert Coaches for
+    # Insert Plays for
+    cursor = g.db.execute(query, {'team_name': team_name})
+    g.db.commit()
+    return cursor.rowcount
+
+

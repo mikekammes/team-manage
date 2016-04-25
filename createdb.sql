@@ -9,6 +9,7 @@ CREATE TABLE Plays_For (
   TeamID REFERENCES Team(TeamID),
   Number Integer,
   Position Text,
+  Joined Boolean,
   PRIMARY KEY (UserID, TeamID)
 );
 
