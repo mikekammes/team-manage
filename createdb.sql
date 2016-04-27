@@ -77,3 +77,11 @@ CREATE TABLE User (
   Last_Name Text NOT NULL,
   Password Text NOT NULL
 );
+
+DROP TABLE IF EXISTS Attending_Event;
+CREATE TABLE Attending_Event (
+  Email Text REFERENCES User (Email),
+  EventID Integer REFERENCES Event (EventID),
+  Attending Boolean,
+  PRIMARY KEY (Email, EventID)
+)
