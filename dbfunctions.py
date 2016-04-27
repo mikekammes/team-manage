@@ -39,7 +39,6 @@ def add_event(team_id, event_type, date_time, location):
     g.db.commit()
     return cursor.rowcount
 
-
 def get_event_for_user(user_id):
     query = '''
         SELECT * FROM event NATURAL JOIN TEAM NATURAL JOIN USER WHERE UserID = :user_id
@@ -56,3 +55,14 @@ def get_all_events():
     cursor = g.db.execute(query)
     g.db.commit()
     return cursor
+
+def add_team(team_name, user_id):
+    query = '''
+        INSERT INTO Team ( Name ) VALUES (:team_name)
+        '''
+    # Insert Coaches for
+    # Insert Plays for
+    cursor = g.db.execute(query, {'team_name': team_name})
+    g.db.commit()
+    return cursor.rowcount
+
