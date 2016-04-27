@@ -5,5 +5,4 @@ db.sqlite
 *.pyc
 .sass-cache/
 .gitignore
-.sass-cache/
-static/custom.css.map
+

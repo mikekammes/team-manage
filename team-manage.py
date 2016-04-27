@@ -11,15 +11,16 @@ now = datetime.datetime.now()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yoyoyoyoyo!'
 app.config['SERVER_NAME'] = '127.0.0.1:5000'
+app.config['WTF_CSRF_ENABLED'] = False
 
 
 # Form Classes
 
 class EventCreationForm(Form):
     location = StringField('Location of event', validators=[DataRequired()])
-    date = DateTimeField('Date of event', validators=[DataRequired()], format='%Y-%m-%d', default=now.date())
+    date = DateTimeField('Date of event', validators=[DataRequired()], format='%Y-%m-%d %H:%M:%S', default=now.date())
     time = StringField('Time of Event', validators=[DataRequired()], default='12 PM')
-    eventType = SelectField('Event Type', validators=[DataRequired],
+    eventType = SelectField('Event Type', validators=[DataRequired()],
                             choices=[(1, 'Game'), (2, 'Practice'), (3, 'Workout'), (4, 'Team Bonding Event')])
     submit = SubmitField('Create Event')
 
