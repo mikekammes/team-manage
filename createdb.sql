@@ -1,3 +1,4 @@
+
 DROP TABLE IF EXISTS Plays_For;
 CREATE TABLE Plays_For (
   UserID INTEGER REFERENCES User(UserID),
@@ -30,7 +31,6 @@ CREATE TABLE Event (
   TeamID REFERENCES Team(TeamID),
   TypeID REFERENCES Type(TypeID)
 );
-
 
 DROP TABLE IF EXISTS Event_Type;
 CREATE TABLE Event_Type (

@@ -4,7 +4,8 @@ from wtforms import StringField, SubmitField, SelectField, RadioField, TextAreaF
     DateTimeField
 from flask.ext.wtf import Form
 from wtforms.validators import DataRequired
-from dbfunctions import open_db_connection, close_db_connection, add_event, add_team
+from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, add_team
+
 
 now = datetime.datetime.now()
 
@@ -22,7 +23,7 @@ class EventCreationForm(Form):
     date = DateTimeField('Date of event', validators=[DataRequired()], format='%Y-%m-%d %H:%M:%S', default=now.date())
     time = StringField('Time of Event', validators=[DataRequired()], default='12 PM')
     eventType = SelectField('Event Type', validators=[DataRequired()],
-                            choices=[(1, 'Game'), (2, 'Practice'), (3, 'Workout'), (4, 'Team Bonding Event')])
+                            choices=[('1', 'Game'), ('2', 'Practice'), ('3', 'Workout'), ('4', 'Team Bonding Event')])
     submit = SubmitField('Create Event')
 
 
@@ -49,12 +50,12 @@ def after(exception):
     close_db_connection(exception)
 
 
-@app.route('/event/create/<team_id>', methods=['GET', 'POST'])
+@app.route('/events/create/<team_id>', methods=['GET', 'POST'])
 def create_event(team_id):
     form = EventCreationForm()
 
     if form.validate_on_submit():
-        success = add_event(form.title.data, team_id, form.eventType.data, form.date.data, form.location.data)
+        success = add_event(int(team_id), int(form.eventType.data), form.date.data, form.location.data)
         if success:
             flash('Event added!', category='success')
             return render_template('base.html')
@@ -62,6 +63,31 @@ def create_event(team_id):
             flash('You\'re seriously screwed', category='danger')
     else:
         return render_template('create-event.html', form=form)
+
+
+@app.route('/events/', defaults={'user_id': None})
+@app.route('/events/<user_id>')
+def see_events(user_id):
+    if user_id is None:
+        all_events = get_all_events()
+        return render_template('show_events.html', events=all_events)
+    else:
+        events = get_event_for_user(user_id)
+        return render_template('show_events.html', events=events)
+
+@app.route('/team/create/', methods=['GET', 'POST'])
+def create_event():
+    form = TeamCreationForm()
+
+    if form.validate_on_submit():
+        success = add_team(form.name.data, form.userId.data, form.coachId.data)
+        if success:
+            flash('Team added!', category='success')
+            return render_template('base.html')
+        else:
+            flash('You\'re seriously screwed', category='danger')
+    else:
+        return render_template('create-team.html', form=form)
 
 
 
