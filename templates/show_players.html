@@ -2,8 +2,9 @@
 
 {% block content %}
     {% for player in players %}
-        {{ player.name }}
+        {{ player.first_name }}
+        {{ player.last_name }}
         {{ player.email }}
-        {{ player.teamid }}
+        {{ player.name }}
     {% endfor %}
 {% endblock %}

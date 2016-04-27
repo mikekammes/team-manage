@@ -73,6 +73,7 @@ CREATE TABLE Equipment (
 DROP TABLE IF EXISTS User;
 CREATE TABLE User (
   Email Text NOT NULL PRIMARY KEY,
-  Name Text NOT NULL,
+  First_Name Text NOT NULL,
+  Last_Name Text NOT NULL,
   Password Text NOT NULL
 );
