@@ -76,7 +76,7 @@ def see_events(user_id):
         return render_template('show_events.html', events=events)
 
 @app.route('/team/create/', methods=['GET', 'POST'])
-def create_event():
+def create_team():
     form = TeamCreationForm()
 
     if form.validate_on_submit():
