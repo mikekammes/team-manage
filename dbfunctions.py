@@ -38,3 +38,21 @@ def add_event(team_id, event_type, date_time, location):
                                   'location': location})
     g.db.commit()
     return cursor.rowcount
+
+
+def get_event_for_user(user_id):
+    query = '''
+        SELECT * FROM event NATURAL JOIN TEAM NATURAL JOIN USER WHERE UserID = :user_id
+    '''
+    cursor = g.db.execute(query, {'user_id': user_id})
+    g.db.commit()
+    return cursor
+
+
+def get_all_events():
+    query = '''
+        SELECT * FROM Event
+    '''
+    cursor = g.db.execute(query)
+    g.db.commit()
+    return cursor
