@@ -1,7 +1,7 @@
 .idea/
-.db.sqlite
 config.codekit
 db.sqlite
+.db.sqlite
 *.pyc
 .sass-cache/
 .gitignore
