@@ -66,3 +66,20 @@ def add_team(team_name, user_id):
     g.db.commit()
     return cursor.rowcount
 
+def get_players_for_team(team_id):
+    query = '''
+        SELECT * FROM "User" NATURAL JOIN Plays_For WHERE TeamID = :team_id
+    '''
+    cursor = g.db.execute(query, {'team_id': team_id})
+    g.db.commit()
+    return cursor
+
+
+def get_all_players():
+    query = '''
+        SELECT * FROM "User" NATURAL JOIN Plays_For
+    '''
+    cursor = g.db.execute(query)
+    g.db.commit()
+    return cursor
+

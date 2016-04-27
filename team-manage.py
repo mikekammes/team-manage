@@ -4,7 +4,7 @@ from wtforms import StringField, SubmitField, SelectField, RadioField, TextAreaF
     DateTimeField
 from flask.ext.wtf import Form
 from wtforms.validators import DataRequired
-from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, add_team
+from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, add_team, get_all_players, get_players_for_team
 
 
 now = datetime.datetime.now()
@@ -74,6 +74,19 @@ def see_events(user_id):
     else:
         events = get_event_for_user(user_id)
         return render_template('show_events.html', events=events)
+
+
+
+
+@app.route('/players/', defaults={'team_id': None})
+@app.route('/players/<team_id>')
+def see_players(team_id):
+    if team_id is None:
+        all_players = get_all_players()
+        return render_template('show_players.html', events=all_players)
+    else:
+        players = get_players_for_team(team_id)
+        return render_template('show_players.html', events=players)
 
 @app.route('/team/create/', methods=['GET', 'POST'])
 def create_team():

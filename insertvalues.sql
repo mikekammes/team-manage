@@ -16,11 +16,11 @@ INSERT INTO "Event_Type" VALUES(2,'Practice');
 INSERT INTO "Event_Type" VALUES(3,'Workout');
 INSERT INTO "Event_Type" VALUES(4,'Team Bonding Event');
 
-INSERT INTO "User" VALUES(1,'Joel Bierre','pass');
-INSERT INTO "User" VALUES(2,'Chris Shelor','pass');
-INSERT INTO "User" VALUES(3,'Todd Fenstermacher','pass');
-INSERT INTO "User" VALUES(4,'Mitch Pawlanta','pass');
-INSERT INTO "User" VALUES(5,'Mike Kammes','pass');
+INSERT INTO "User" VALUES(1,'joel@example.com','Joel Bierre','pass');
+INSERT INTO "User" VALUES(2,'chris@example.com','Chris Shelor','pass');
+INSERT INTO "User" VALUES(3,'todd@example.com','Todd Fenstermacher','pass');
+INSERT INTO "User" VALUES(4,'mitch@example.com','Mitch Pawlanta','pass');
+INSERT INTO "User" VALUES(5,'mike@example.com','Mike Kammes','pass');
 
 INSERT INTO "Event" VALUES(1,'Away vs. IWU',1461988800000,'Matter Park','1','1');
 INSERT INTO "Event" VALUES(2,'Tuesday practice',1462248000000,'Practice Field','1','2');
