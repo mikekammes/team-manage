@@ -24,6 +24,11 @@
         {{ form.hidden_tag() }}
         <div class="row">
             <div class="col-xs-6 col-xs-offset-3">
+                {{ form.title.label }}{{ form.title() }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">
                 {{ form.date.label }}{{ form.date() }}
             </div>
         </div>

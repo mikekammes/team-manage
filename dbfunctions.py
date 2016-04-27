@@ -30,11 +30,11 @@ def close_db_connection(exception):
         db.close()
 
 
-def add_event(team_id, event_type, date_time, location):
+def add_event(title, team_id, event_type, date_time, location):
     query = '''
-        INSERT INTO Event ( DateTime, Location, TeamID, TypeID) VALUES (:date_time, :location, :team_id, :event_type)
+        INSERT INTO Event ( Title, DateTime, Location, TeamID, TypeID) VALUES (:title, :date_time, :location, :team_id, :event_type)
         '''
-    cursor = g.db.execute(query, {'team_id': team_id, 'event_type': event_type, 'date_time': date_time,
+    cursor = g.db.execute(query, {'title': title, 'team_id': team_id, 'event_type': event_type, 'date_time': date_time,
                                   'location': location})
     g.db.commit()
     return cursor.rowcount
