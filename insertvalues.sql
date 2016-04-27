@@ -21,3 +21,10 @@ INSERT INTO "User" VALUES(2,'Chris Shelor','pass');
 INSERT INTO "User" VALUES(3,'Todd Fenstermacher','pass');
 INSERT INTO "User" VALUES(4,'Mitch Pawlanta','pass');
 INSERT INTO "User" VALUES(5,'Mike Kammes','pass');
+
+INSERT INTO "Event" VALUES(1,'Away vs. IWU',1461988800000,'Matter Park','1','1');
+INSERT INTO "Event" VALUES(2,'Tuesday practice',1462248000000,'Practice Field','1','2');
+INSERT INTO "Event" VALUES(3,'End of year party',1463716800000,'Student Center','1','4');
+INSERT INTO "Event" VALUES(4,'Home vs. Purdue',1461988800000,'Lacrosse Field','2','1');
+INSERT INTO "Event" VALUES(5,'Walkthrough practice',1461902400000,'Practice Field','2','2');
+INSERT INTO "Event" VALUES(6,'Thursday morning workout',1461816000000,'KSAC','2','3');

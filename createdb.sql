@@ -15,6 +15,7 @@ CREATE TABLE Coaches (
   PRIMARY KEY (UserID, TeamID)
 );
 
+DROP TABLE IF EXISTS Team;
 CREATE TABLE Team (
   TeamID Integer PRIMARY KEY,
   Name Text NOT NULL
@@ -23,6 +24,7 @@ CREATE TABLE Team (
 DROP TABLE IF EXISTS Event;
 CREATE TABLE Event (
   EventID Integer PRIMARY KEY,
+  Title TEXT NOT NULL,
   DateTime DateTime NOT NULL,
   Location Text,
   TeamID REFERENCES Team(TeamID),
@@ -44,6 +46,7 @@ CREATE TABLE Notified_For (
   PRIMARY KEY (ContactID, TypeID)
 );
 
+DROP TABLE IF EXISTS Contact;
 CREATE TABLE Contact (
   ContactID Integer,
   Contact Text NOT NULL,
