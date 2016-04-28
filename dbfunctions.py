@@ -81,7 +81,9 @@ def add_team(team_name, coach_email):
     '''
     cursor.execute(team_query, {'team_name': team_name})
     team_row = cursor.lastrowid
-    teamid = g.db.execute('SELECT TeamID FROM Team WHERE ROWID = :row', {'row': team_row})
+    team_cur = g.db.execute('SELECT TeamID FROM Team WHERE ROWID = :row', {'row': team_row})
+    teamid = team_cur.fetchone()[0]
+    print("Team id is: ", teamid)
     coaches_query = '''
         INSERT INTO Coaches VALUES (:coach_email, :team_id)
     '''
