@@ -1,19 +1,19 @@
 
 DROP TABLE IF EXISTS Plays_For;
 CREATE TABLE Plays_For (
-  UserID INTEGER REFERENCES User(UserID),
+  Email INTEGER REFERENCES User(Email),
   TeamID INTEGER REFERENCES Team(TeamID),
   Number Integer,
   Position Text,
   Joined Boolean,
-  PRIMARY KEY (UserID, TeamID)
+  PRIMARY KEY (Email, TeamID)
 );
 
 DROP TABLE IF EXISTS Coaches;
 CREATE TABLE Coaches (
-  UserID INTEGER REFERENCES User(UserID),
+  Email INTEGER REFERENCES User(Email),
   TeamID INTEGER REFERENCES Team(TeamID),
-  PRIMARY KEY (UserID, TeamID)
+  PRIMARY KEY (Email, TeamID)
 );
 
 DROP TABLE IF EXISTS Team;
@@ -28,8 +28,8 @@ CREATE TABLE Event (
   Title TEXT NOT NULL,
   DateTime DateTime NOT NULL,
   Location Text,
-  TeamID REFERENCES Team(TeamID),
-  TypeID REFERENCES Type(TypeID)
+  TeamID INTEGER REFERENCES Team(TeamID),
+  TypeID INTEGER REFERENCES Type(TypeID)
 );
 
 DROP TABLE IF EXISTS Event_Type;
@@ -56,23 +56,32 @@ CREATE TABLE Contact (
 
 DROP TABLE IF EXISTS Uses;
 CREATE TABLE Uses (
-  UserID INTEGER REFERENCES User(UserID),
+  Email INTEGER REFERENCES User(Email),
   ContactID INTEGER REFERENCES Contact(ContactID),
-  PRIMARY KEY (UserID, ContactID)
+  PRIMARY KEY (Email, ContactID)
 );
 
 DROP TABLE IF EXISTS Equipment;
 CREATE TABLE Equipment (
   EquipmentID Integer PRIMARY KEY,
-  LoanerID INTEGER REFERENCES User(UserID),
-  BorrowerID INTEGER REFERENCES User(UserID),
+  LoanerID INTEGER REFERENCES User(Email),
+  BorrowerID INTEGER REFERENCES User(Email),
   Kind Text,
   LoanDate DateTime DEFAULT (datetime('now', 'localtime'))
 );
 
 DROP TABLE IF EXISTS User;
 CREATE TABLE User (
-  UserID Integer PRIMARY KEY,
-  Name Text NOT NULL,
+  Email Text NOT NULL PRIMARY KEY,
+  First_Name Text NOT NULL,
+  Last_Name Text NOT NULL,
   Password Text NOT NULL
 );
+
+DROP TABLE IF EXISTS Attending_Event;
+CREATE TABLE Attending_Event (
+  Email Text REFERENCES User (Email),
+  EventID Integer REFERENCES Event (EventID),
+  Attending Boolean,
+  PRIMARY KEY (Email, EventID)
+)

@@ -5,7 +5,7 @@ from wtforms import StringField, SubmitField, SelectField, RadioField, TextAreaF
 from flask.ext.wtf import Form
 from wtforms.validators import DataRequired
 from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
-    add_team, get_all_teams
+    add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams
 
 now = datetime.datetime.now()
 
@@ -30,12 +30,27 @@ class EventCreationForm(Form):
 
 class TeamCreationForm(Form):
     name = StringField('Name of team', validators=[DataRequired()])
-    userId = StringField('User to invite', validators=[DataRequired()])
-    coachId = StringField('Coach of team', validators=[DataRequired()])
+    coachEmail = StringField("Coach's email", validators=[DataRequired()])
+    submit = SubmitField('Create Team')
+
+
+class AddPlayerForm(Form):
+    fname = StringField('First name of player', validators=[DataRequired()])
+    lname = StringField('Last name of player', validators=[DataRequired()])
+    position = StringField('Player position', validators=[DataRequired()])
+    number = StringField('Player number', validators=[DataRequired()])
+    email = StringField('Email of player', validators=[DataRequired()])
+    submit = SubmitField('Add Player')
+
+
+class SignUpForm(Form):
+    fname = StringField('First name', validators=[DataRequired()])
+    lname = StringField('Last name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField('Sign Up')
 
 
 # Routes
-
 
 @app.route('/')
 def home():
@@ -61,7 +76,8 @@ def create_event():
         team_list.append((str(team['TeamID']), team['Name']))
     form.team.choices = team_list
     if form.validate_on_submit():
-        success = add_event(form.title.data, str(form.team.data), int(form.eventType.data), form.date.data, form.location.data)
+        success = add_event(form.title.data, str(form.team.data), int(form.eventType.data), form.date.data,
+                            form.location.data)
         if success:
             flash('Event added!', category='success')
             return render_template('base.html')
@@ -71,30 +87,72 @@ def create_event():
         return render_template('create-event.html', form=form)
 
 
-@app.route("/events/", defaults={'user_id': None})
-@app.route("/events/<user_id>")
-def see_events(user_id):
-    if user_id is None:
+@app.route('/events/', defaults={'email': None})
+@app.route('/events/<email>')
+def see_events(email):
+    if email is None:
         all_events = get_all_events()
         return render_template('show_events.html', events=all_events)
     else:
-        events = get_event_for_user(user_id)
+        events = get_event_for_user(email)
         return render_template('show_events.html', events=events)
 
 
-@app.route("/team/create/", methods=['GET', 'POST'])
+@app.route('/players/', defaults={'team_id': None})
+@app.route('/players/<team_id>')
+def see_players(team_id):
+    if team_id is None:
+        all_players = get_all_players()
+        return render_template('show_players.html', players=all_players)
+    else:
+        players = get_players_for_team(team_id)
+        return render_template('show_players.html', players=players)
+
+
+@app.route('/team/create/', methods=['GET', 'POST'])
 def create_team():
     form = TeamCreationForm()
 
     if form.validate_on_submit():
-        success = add_team(form.name.data, form.userId.data, form.coachId.data)
+        success, team_id = add_team(form.name.data, form.coachEmail.data)
         if success:
             flash('Team added!', category='success')
-            return render_template('base.html')
+            return redirect(url_for('add_player', team_id=team_id))
         else:
             flash('You\'re seriously screwed', category='danger')
     else:
         return render_template('create-team.html', form=form)
+
+
+@app.route('/team/add/<team_id>', methods=['GET', 'POST'])
+def add_player(team_id):
+    form = AddPlayerForm()
+
+    if form.validate_on_submit():
+        success = add_players(team_id, form.email.data, form.fname.data, form.lname.data, int(form.number.data),
+                              form.position.data)
+        if success:
+            flash('Player added!', category='success')
+            return render_template('add-player.html')
+        else:
+            flash('You\'re seriously screwed', category='danger')
+    else:
+        return render_template('add-player.html', form=form)
+
+
+@app.route('/signup/', methods=['GET', 'POST'])
+def sign_up():
+    form = SignUpForm()
+
+    if form.validate_on_submit():
+        success = create_user(form.email.data, form.fname.data, form.lname.data)
+        if success:
+            flash('Successful sign up!', category='success')
+            return render_template('base.html')
+        else:
+            flash('You\'re seriously screwed', category='danger')
+    else:
+        return render_template('sign-up.html', form=form)
 
 
 if __name__ == '__main__':

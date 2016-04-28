@@ -23,14 +23,29 @@
         {{ form.hidden_tag() }}
         <div class="row">
             <div class="col-xs-6 col-xs-offset-3">
-                {{ form.name.label }}{{ form.name() }}
+                {{ form.fname.label }}{{ form.fname() }}
             </div>
         </div>
-
         <div class="row">
-            <div class="col-xs-6 col-xs-offset-3">{{ form.coachEmail.label }}{{ form.coachEmail() }}</div>
+            <div class="col-xs-6 col-xs-offset-3">
+                {{ form.lname.label }}{{ form.lname() }}
+            </div>
         </div>
-
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">
+                {{ form.email.label }}{{ form.email() }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">
+                {{ form.position.label }}{{ form.position() }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">
+                {{ form.number.label }}{{ form.number() }}
+            </div>
+        </div>
         <div class="row">
             <div class="col-xs-6 pull-right">{{ form.submit }}</div>
         </div>

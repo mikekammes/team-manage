@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for player in players %}
+        {{ player.first_name }}
+        {{ player.last_name }}
+        {{ player.email }}
+        {{ player.name }}
+    {% endfor %}
+{% endblock %}
