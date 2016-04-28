@@ -28,3 +28,19 @@ INSERT INTO "Event" VALUES(3,'End of year party','2016-05-20 17:00:00','Student 
 INSERT INTO "Event" VALUES(4,'Home vs. Purdue','2016-04-25 15:00:00','Lacrosse Field',2,1);
 INSERT INTO "Event" VALUES(5,'Walkthrough practice','2016-04-24 14:00:00','Practice Field',2,2);
 INSERT INTO "Event" VALUES(6,'Thursday morning workout','2016-04-23 06:30:00','KSAC',2,3);
+
+INSERT INTO "Attending_Event" VALUES('joel@example.com', 1, 0);
+INSERT INTO "Attending_Event" VALUES('joel@example.com', 2, 0);
+INSERT INTO "Attending_Event" VALUES('joel@example.com', 3, 0);
+INSERT INTO "Attending_Event" VALUES('chris@example.com', 1, 0);
+INSERT INTO "Attending_Event" VALUES('chris@example.com', 2, 0);
+INSERT INTO "Attending_Event" VALUES('chris@example.com', 3, 0);
+INSERT INTO "Attending_Event" VALUES('todd@example.com', 1, 0);
+INSERT INTO "Attending_Event" VALUES('todd@example.com', 2, 0);
+INSERT INTO "Attending_Event" VALUES('todd@example.com', 3, 0);
+INSERT INTO "Attending_Event" VALUES('mike@example.com', 4, 0);
+INSERT INTO "Attending_Event" VALUES('mike@example.com', 5, 0);
+INSERT INTO "Attending_Event" VALUES('mike@example.com', 6, 0);
+INSERT INTO "Attending_Event" VALUES('mitch@example.com', 4, 0);
+INSERT INTO "Attending_Event" VALUES('mitch@example.com', 5, 0);
+INSERT INTO "Attending_Event" VALUES('mitch@example.com', 6, 0);
