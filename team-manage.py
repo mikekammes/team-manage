@@ -7,7 +7,7 @@ from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
     add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams, get_usersname, \
-    create_rsvp, get_emails_from_team, RSVP
+    create_rsvp, get_emails_from_team, RSVP, delete_event
 
 now = datetime.datetime.now()
 
@@ -107,6 +107,18 @@ def create_event():
         return render_template('create-event.html', form=form)
 
 
+@app.route('/events/delete/<event_id>', methods=['GET', 'POST'])
+def event_remover(event_id):
+    print 'in event remover'
+    success = delete_event(event_id)
+    if success == 1:
+        flash("Event Deleted", category='danger')
+        return redirect(url_for('see_events'))
+    else:
+        print success
+        return redirect(url_for('see_events'))
+
+
 @app.route('/events/', defaults={'email': None})
 @app.route('/events/<email>')
 def see_events(email):
@@ -203,7 +215,7 @@ def sign_up():
         return render_template('sign-up.html', form=form)
 
 
-@app.route('/event/<event_id>/rsvp', methods=['GET', 'POST'])
+@app.route('/events/<event_id>/rsvp', methods=['GET', 'POST'])
 def rsvp(event_id):
     form = RSVPForm()
     team_emails = get_emails_from_team(event_id)

@@ -99,7 +99,7 @@ def delete_event(event_id):
     g.db.execute('DELETE FROM Attending_Event WHERE EventID = :event_id', {'event_id': event_id})
     g.db.execute('DELETE FROM Event WHERE EventID = :event_id', {'event_id': event_id})
     g.db.commit()
-    return cursor.count
+    return cursor.rowcount
 
 
 def get_all_players():
