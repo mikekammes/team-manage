@@ -94,6 +94,14 @@ def create_rsvp(email, event_id):
     return cursor.rowcount
 
 
+def delete_event(event_id):
+    cursor = g.db.cursor()
+    g.db.execute('DELETE FROM Attending_Event WHERE EventID = :event_id', {'event_id': event_id})
+    g.db.execute('DELETE FROM Event WHERE EventID = :event_id', {'event_id': event_id})
+    g.db.commit()
+    return cursor.count
+
+
 def get_all_players():
     query = '''
         SELECT * FROM "User" NATURAL JOIN Plays_For NATURAL JOIN Team
