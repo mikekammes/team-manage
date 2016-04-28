@@ -42,7 +42,15 @@ def add_event(title, team_id, event_type, date_time, location):
 
 def get_event_for_user(email):
     query = '''
-        SELECT * FROM Event NATURAL JOIN Team NATURAL JOIN Plays_For WHERE Email = :email
+        SELECT *
+        FROM (
+          SELECT*,COUNT(Attending) AS RSVPs
+          FROM Event
+            NATURAL JOIN Team
+            NATURAL JOIN Attending_Event
+          GROUP BY EventID
+        )
+        WHERE TeamID IN (SELECT TeamID FROM Plays_For WHERE Email = :email);
     '''
     cursor = g.db.execute(query, {'email': email})
     g.db.commit()
@@ -51,7 +59,14 @@ def get_event_for_user(email):
 
 def get_all_events():
     query = '''
-        SELECT * FROM Event NATURAL JOIN Team NATURAL JOIN Event_Type ORDER BY TeamID
+        SELECT *
+        FROM (
+          SELECT*,COUNT(Attending) AS RSVPs
+          FROM Event
+            NATURAL JOIN Team
+            NATURAL JOIN Attending_Event
+          GROUP BY EventID
+        );
     '''
     cursor = g.db.execute(query)
     g.db.commit()
@@ -131,7 +146,7 @@ def add_event(title, team_id, event_type, date_time, location):
         INSERT INTO Event ( Title, DateTime, Location, TeamID, TypeID) VALUES (:title, :date_time, :location, :team_id, :event_type)
         '''
     cursor.execute(query, {'title': title, 'team_id': team_id, 'event_type': event_type, 'date_time': date_time,
-                                  'location': location})
+                           'location': location})
     event_row = cursor.lastrowid
     event_cur = g.db.execute('SELECT EventID FROM Event WHERE ROWID = :row', {'row': event_row})
     event_id = event_cur.fetchone()

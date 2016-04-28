@@ -114,7 +114,6 @@ def see_events(email):
         return render_template('show-events.html', events=all_events)
     else:
         events = get_event_for_user(email)
-
         user = get_usersname(email)
         first = user['first_name']
         last = user['last_name']
