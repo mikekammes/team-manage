@@ -3,52 +3,63 @@
 
 
 {% if form.errors %}
-        <div class="row">
-            <div class="col-xs-12">
-                <ul>
-                    {% for field_name in form.errors %}
-                        {% for field_error in form.errors[field_name] %}
-                            <div class="alert alert-danger alert-dismissible text-center" role="alert">
-                                <button type="button" class="btn btn-secondary close" data-dismiss="alert" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                                {{ form[field_name].label }}: {{ field_error }}
-                            </div>
-                        {% endfor %}
+    <div class="row">
+        <div class="col-xs-12">
+            <ul>
+                {% for field_name in form.errors %}
+                    {% for field_error in form.errors[field_name] %}
+                        <div class="alert alert-danger alert-dismissible text-center" role="alert">
+                            <button type="button" class="btn btn-secondary close" data-dismiss="alert"
+                                    aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            {{ form[field_name].label }}: {{ field_error }}
+                        </div>
                     {% endfor %}
-                </ul>
-            </div>
+                {% endfor %}
+            </ul>
         </div>
+    </div>
 {% endif %}
 
 {% block content %}
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <div class="row">
-            <div class="col-xs-6 col-xs-offset-3">{{ form.team.label }}{{ form.team }}</div>
+    <div class="row">
+        <div class="col-xs-6 col-xs-offset-3">
+            <form method="POST" class="form-box">
+                <div class="row">{{ form.hidden_tag() }}</div>
+                <div class="row">
+                    <div class="col-xs-6 ">{{ form.team.label }}</div>
+                    <div class="col-xs-6 ">{{ form.team() }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 ">
+                        {{ form.title.label }}
+                    </div>
+                    <div class="col-xs-6 ">{{ form.title() }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 ">
+                        {{ form.date.label }}
+                    </div>
+                    <div class="col-xs-6 ">{{ form.date() }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 ">
+                        {{ form.location.label }}
+                    </div>
+                    <div class="col-xs-6 ">{{ form.location() }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 ">{{ form.time.label }}</div>
+                    <div class="col-xs-6 ">{{ form.time() }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 ">{{ form.eventType.label }}</div>
+                    <div class="col-xs-6 ">{{ form.eventType() }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 ">{{ form.submit }}</div>
+                </div>
+            </form>
         </div>
-        <div class="row">
-            <div class="col-xs-6 col-xs-offset-3">
-                {{ form.title.label }}{{ form.title() }}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 col-xs-offset-3">
-                {{ form.date.label }}{{ form.date() }}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 col-xs-offset-3">
-                {{ form.location.label }}{{ form.location() }}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 col-xs-offset-3">{{ form.time.label }}{{ form.time() }}</div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 col-xs-offset-3">{{ form.eventType.label }}{{ form.eventType() }}</div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6 pull-right">{{ form.submit }}</div>
-        </div>
-    </form>
+    </div>
 {% endblock %}

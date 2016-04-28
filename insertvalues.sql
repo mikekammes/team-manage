@@ -22,9 +22,9 @@ INSERT INTO "User" VALUES('todd@example.com','Todd','Fenstermacher','pass');
 INSERT INTO "User" VALUES('mitch@example.com','Mitch','Pawlanta','pass');
 INSERT INTO "User" VALUES('mike@example.com','Mike','Kammes','pass');
 
-INSERT INTO "Event" VALUES(1,'Away vs. IWU',1461988800000,'Matter Park',1,1);
-INSERT INTO "Event" VALUES(2,'Tuesday practice',1462248000000,'Practice Field',1,2);
-INSERT INTO "Event" VALUES(3,'End of year party',1463716800000,'Student Center',1,4);
-INSERT INTO "Event" VALUES(4,'Home vs. Purdue',1461988800000,'Lacrosse Field',2,1);
-INSERT INTO "Event" VALUES(5,'Walkthrough practice',1461902400000,'Practice Field',2,2);
-INSERT INTO "Event" VALUES(6,'Thursday morning workout',1461816000000,'KSAC',2,3);
+INSERT INTO "Event" VALUES(1,'Away vs. IWU','2016-05-14 14:30:00','Matter Park',1,1);
+INSERT INTO "Event" VALUES(2,'Tuesday practice','2016-05-18 16:00:00','Practice Field',1,2);
+INSERT INTO "Event" VALUES(3,'End of year party','2016-05-20 17:00:00','Student Center',1,4);
+INSERT INTO "Event" VALUES(4,'Home vs. Purdue','2016-04-25 15:00:00','Lacrosse Field',2,1);
+INSERT INTO "Event" VALUES(5,'Walkthrough practice','2016-04-24 14:00:00','Practice Field',2,2);
+INSERT INTO "Event" VALUES(6,'Thursday morning workout','2016-04-23 06:30:00','KSAC',2,3);

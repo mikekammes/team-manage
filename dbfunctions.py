@@ -50,16 +50,13 @@ def get_event_for_user(email):
 
 
 def get_all_events():
-    print("Getting all userrs")
-
     query = '''
-        SELECT * FROM Event
+        SELECT * FROM Event NATURAL JOIN Team NATURAL JOIN Event_Type ORDER BY TeamID
     '''
     cursor = g.db.execute(query)
     g.db.commit()
 
     return cursor
-
 
 
 def add_team(team_name, coach_email):
@@ -69,13 +66,14 @@ def add_team(team_name, coach_email):
     '''
     cursor.execute(team_query, {'team_name': team_name})
     teamid = cursor.lastrowid
-    print('Team id is:',teamid)
+    print('Team id is:', teamid)
     coaches_query = '''
         INSERT INTO Coaches VALUES (:coach_email, :team_id)
     '''
     cursor.execute(coaches_query, {'coach_email': coach_email, 'team_id': teamid})
     g.db.commit()
     return cursor.rowcount, teamid
+
 
 def get_players_for_team(team_id):
     query = '''
@@ -92,7 +90,7 @@ def get_all_players():
     '''
     cursor = g.db.execute(query)
     g.db.commit()
-    return cursor
+    return cursor.fetchall()
 
 
 def add_players(team_id, email, fname, lname, number, position):
@@ -109,7 +107,7 @@ def add_players(team_id, email, fname, lname, number, position):
     return cursor.rowcount
 
 
-def add_event(team_id, email):
+def add_event(title, team_id, event_type, date_time, location):
     query = '''
         INSERT INTO Event ( Title, DateTime, Location, TeamID, TypeID) VALUES (:title, :date_time, :location, :team_id, :event_type)
         '''
@@ -119,11 +117,11 @@ def add_event(team_id, email):
     return cursor.rowcount
 
 
-
 def get_all_teams():
     cursor = g.db.execute('SELECT TeamID, Name FROM Team')
     g.db.commit()
-    return cursor
+    return cursor.fetchall()
+
 
 def create_user(email, fname, lname):
     cursor = g.db.cursor()
@@ -134,3 +132,8 @@ def create_user(email, fname, lname):
     g.db.commit()
     return cursor.rowcount
 
+
+def get_usersname(email):
+    cursor = g.db.execute('SELECT name FROM User WHERE email= :email', {'email': email})
+    g.db.commit()
+    return cursor.fetchone()

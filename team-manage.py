@@ -5,7 +5,7 @@ from wtforms import StringField, SubmitField, SelectField, RadioField, TextAreaF
 from flask.ext.wtf import Form
 from wtforms.validators import DataRequired
 from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
-    add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams
+    add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams, get_usersname
 
 now = datetime.datetime.now()
 
@@ -20,7 +20,7 @@ app.config['WTF_CSRF_ENABLED'] = False
 class EventCreationForm(Form):
     title = StringField('Title of event', validators=[DataRequired()])
     location = StringField('Location of event', validators=[DataRequired()])
-    date = DateTimeField('Date of event', validators=[DataRequired()], format='%Y-%m-%d %H:%M:%S', default=now.date())
+    date = DateTimeField('Date of event', validators=[DataRequired()], format='%Y-%m-%d %H:%M:%S', default=now)
     time = StringField('Time of Event', validators=[DataRequired()], default='12 PM')
     eventType = SelectField('Event Type', validators=[DataRequired()],
                             choices=[('1', 'Game'), ('2', 'Practice'), ('3', 'Workout'), ('4', 'Team Bonding Event')])
@@ -95,7 +95,8 @@ def see_events(email):
         return render_template('show_events.html', events=all_events)
     else:
         events = get_event_for_user(email)
-        return render_template('show_events.html', events=events)
+        name = get_usersname(email)[0]
+        return render_template('show_events.html', events=events, user=name)
 
 
 @app.route('/players/', defaults={'team_id': None})

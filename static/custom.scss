@@ -1,3 +1,13 @@
-.something {
-  color:red;
+.form-box {
+  padding:10px;
+  border: 2px solid dodgerblue;
+  border-radius:4px;
+  .row {
+    margin: 5px 0;
+  }
+}
+
+.event-row {
+  margin:5px 0;
+  border-bottom: 1px solid gray;
 }
