@@ -84,4 +84,4 @@ CREATE TABLE Attending_Event (
   EventID Integer REFERENCES Event (EventID),
   Attending Boolean,
   PRIMARY KEY (Email, EventID)
-)
+);
