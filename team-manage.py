@@ -4,8 +4,8 @@ from wtforms import StringField, SubmitField, SelectField, RadioField, TextAreaF
     DateTimeField
 from flask.ext.wtf import Form
 from wtforms.validators import DataRequired
-from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, add_team
-
+from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
+    add_team, get_all_teams
 
 now = datetime.datetime.now()
 
@@ -24,6 +24,7 @@ class EventCreationForm(Form):
     time = StringField('Time of Event', validators=[DataRequired()], default='12 PM')
     eventType = SelectField('Event Type', validators=[DataRequired()],
                             choices=[('1', 'Game'), ('2', 'Practice'), ('3', 'Workout'), ('4', 'Team Bonding Event')])
+    team = SelectField('Select Team', validators=[DataRequired()])
     submit = SubmitField('Create Event')
 
 
@@ -31,6 +32,7 @@ class TeamCreationForm(Form):
     name = StringField('Name of team', validators=[DataRequired()])
     userId = StringField('User to invite', validators=[DataRequired()])
     coachId = StringField('Coach of team', validators=[DataRequired()])
+
 
 # Routes
 
@@ -50,12 +52,16 @@ def after(exception):
     close_db_connection(exception)
 
 
-@app.route('/events/create/<team_id>', methods=['GET', 'POST'])
-def create_event(team_id):
+@app.route('/events/create/', methods=['GET', 'POST'])
+def create_event():
     form = EventCreationForm()
-
+    all_teams = get_all_teams()
+    team_list = []
+    for team in all_teams:
+        team_list.append((str(team['TeamID']), team['Name']))
+    form.team.choices = team_list
     if form.validate_on_submit():
-        success = add_event(int(team_id), int(form.eventType.data), form.date.data, form.location.data)
+        success = add_event(form.title.data, str(form.team.data), int(form.eventType.data), form.date.data, form.location.data)
         if success:
             flash('Event added!', category='success')
             return render_template('base.html')
@@ -65,8 +71,8 @@ def create_event(team_id):
         return render_template('create-event.html', form=form)
 
 
-@app.route('/events/', defaults={'user_id': None})
-@app.route('/events/<user_id>')
+@app.route("/events/", defaults={'user_id': None})
+@app.route("/events/<user_id>")
 def see_events(user_id):
     if user_id is None:
         all_events = get_all_events()
@@ -75,7 +81,8 @@ def see_events(user_id):
         events = get_event_for_user(user_id)
         return render_template('show_events.html', events=events)
 
-@app.route('/team/create/', methods=['GET', 'POST'])
+
+@app.route("/team/create/", methods=['GET', 'POST'])
 def create_team():
     form = TeamCreationForm()
 
@@ -88,7 +95,6 @@ def create_team():
             flash('You\'re seriously screwed', category='danger')
     else:
         return render_template('create-team.html', form=form)
-
 
 
 if __name__ == '__main__':
