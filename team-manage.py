@@ -40,6 +40,8 @@ class AddPlayerForm(Form):
     position = StringField('Player position', validators=[DataRequired()])
     number = StringField('Player number', validators=[DataRequired()])
     email = StringField('Email of player', validators=[DataRequired()])
+    team = SelectField('Select Team', validators=[DataRequired()])
+
     submit = SubmitField('Add Player')
 
 
@@ -49,6 +51,9 @@ class SignUpForm(Form):
     email = StringField('Email', validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
+class GetTeamPlayersForm(Form):
+    team = SelectField('Select Team', validators=[DataRequired()])
+    submit = SubmitField('View Players')
 
 # Routes
 
@@ -92,21 +97,34 @@ def create_event():
 def see_events(email):
     if email is None:
         all_events = get_all_events()
-        return render_template('show_events.html', events=all_events)
+        return render_template('show-events.html', events=all_events)
     else:
         events = get_event_for_user(email)
-        return render_template('show_events.html', events=events)
+        return render_template('show-events.html', events=events)
 
 
-@app.route('/players/', defaults={'team_id': None})
-@app.route('/players/<team_id>')
+@app.route('/team/players/', methods=['GET', 'POST'])
+def get_players():
+    form = GetTeamPlayersForm()
+    all_teams = get_all_teams()
+    team_list = []
+    for team in all_teams:
+        team_list.append((str(team['TeamID']), team['Name']))
+    form.team.choices = team_list
+    if form.validate_on_submit():
+        return url_for('show-players.html', team_id=form.team.data)
+    else:
+        return render_template('show-players-form.html')
+
+
+@app.route('/team/players/<team_id>')
 def see_players(team_id):
     if team_id is None:
         all_players = get_all_players()
-        return render_template('show_players.html', players=all_players)
+        return render_template('show-players.html', players=all_players)
     else:
         players = get_players_for_team(team_id)
-        return render_template('show_players.html', players=players)
+        return render_template('show-players.html', players=players)
 
 
 @app.route('/team/create/', methods=['GET', 'POST'])
@@ -117,23 +135,27 @@ def create_team():
         success, team_id = add_team(form.name.data, form.coachEmail.data)
         if success:
             flash('Team added!', category='success')
-            return redirect(url_for('add_player', team_id=team_id))
+            return redirect(url_for('add_player'))
         else:
             flash('You\'re seriously screwed', category='danger')
     else:
         return render_template('create-team.html', form=form)
 
 
-@app.route('/team/add/<team_id>', methods=['GET', 'POST'])
-def add_player(team_id):
+@app.route('/team/add/', methods=['GET', 'POST'])
+def add_player():
     form = AddPlayerForm()
-
+    all_teams = get_all_teams()
+    team_list = []
+    for team in all_teams:
+        team_list.append((str(team['TeamID']), team['Name']))
+    form.team.choices = team_list
     if form.validate_on_submit():
-        success = add_players(team_id, form.email.data, form.fname.data, form.lname.data, int(form.number.data),
+        success = add_players(form.team.data, form.email.data, form.fname.data, form.lname.data, int(form.number.data),
                               form.position.data)
         if success:
             flash('Player added!', category='success')
-            return render_template('add-player.html')
+            return render_template('add-player.html', form=form)
         else:
             flash('You\'re seriously screwed', category='danger')
     else:
