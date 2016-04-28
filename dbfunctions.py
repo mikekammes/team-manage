@@ -103,7 +103,7 @@ def get_players_for_team(team_id):
 def create_rsvp(email, event_id):
     cursor = g.db.cursor()
     user_query = '''
-            INSERT INTO Attending_Event (Email, EventID, Attending) VALUES (:email, :eventid, 0)
+            INSERT INTO Attending_Event (Email, EventID, Attending) VALUES (:email, :eventid, NULL )
         '''
     cursor.execute(user_query, {'email': email, 'eventid': event_id})
     g.db.commit()
@@ -192,9 +192,14 @@ def get_emails_from_team(event_id):
 
 
 def RSVP(event_id, email, attending_status):
-    query = '''
-        UPDATE attending_event SET Attending = :attending WHERE EventID = :event_id AND Email = :email
-    '''
+    if attending_status == '0':
+        query = '''
+            UPDATE attending_event SET Attending = NULL WHERE EventID = :event_id AND Email = :email
+        '''
+    else:
+        query = '''
+            UPDATE attending_event SET Attending = :attending WHERE EventID = :event_id AND Email = :email
+        '''
     cursor = g.db.execute(query, {'event_id': event_id, 'email': email, 'attending': attending_status})
     g.db.commit()
     return cursor.rowcount
