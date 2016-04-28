@@ -180,4 +180,5 @@ def RSVP(event_id, email, attending_status):
         UPDATE attending_event SET Attending = :attending WHERE EventID = :event_id AND Email = :email
     '''
     cursor = g.db.execute(query, {'event_id': event_id, 'email': email, 'attending': attending_status})
+    g.db.commit()
     return cursor.rowcount

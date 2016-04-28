@@ -61,7 +61,8 @@ class GetTeamPlayersForm(Form):
 
 class RSVPForm(Form):
     email = SelectField('Email', validators=[DataRequired()], choices=[])
-    attending = SelectField('Are you attending?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')])
+    attending = SelectField('Are you attending?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')],
+                            coerce=str)
     submit = SubmitField('RSVP')
 
 
