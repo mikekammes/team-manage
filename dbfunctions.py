@@ -122,7 +122,6 @@ def get_all_teams():
     g.db.commit()
     return cursor.fetchall()
 
-
 def create_user(email, fname, lname):
     cursor = g.db.cursor()
     user_query = '''
