@@ -67,9 +67,6 @@ def add_team(team_name, coach_email):
     cursor.execute(team_query, {'team_name': team_name})
     team_row = cursor.lastrowid
     teamid = g.db.execute('SELECT TeamID FROM Team WHERE ROWID = :row', {'row': team_row})
-
-
-    print('Team id is:', teamid)
     coaches_query = '''
         INSERT INTO Coaches VALUES (:coach_email, :team_id)
     '''
@@ -87,7 +84,7 @@ def get_players_for_team(team_id):
     return cursor.fetchall()
 
 
-def set_rsvp(email, event_id):
+def create_rsvp(email, event_id):
     cursor = g.db.cursor()
     user_query = '''
             INSERT INTO Attending_Event (Email, EventID, Attending) VALUES (:email, :eventid, 0)
@@ -130,10 +127,6 @@ def add_event(title, team_id, event_type, date_time, location):
     event_row = cursor.lastrowid
     event_cur = g.db.execute('SELECT EventID FROM Event WHERE ROWID = :row', {'row': event_row})
     event_id = event_cur.fetchone()
-    if event_id is None:
-        print("Couldn't add event")
-    else:
-        print("Event id is: ", event_id[0])
     g.db.commit()
     return cursor.rowcount, event_id[0]
 

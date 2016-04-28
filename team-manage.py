@@ -5,7 +5,7 @@ from wtforms import StringField, SubmitField, SelectField, RadioField, TextAreaF
 from flask.ext.wtf import Form
 from wtforms.validators import DataRequired
 from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
-    add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams, get_usersname, set_rsvp
+    add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams, get_usersname, create_rsvp
 
 now = datetime.datetime.now()
 
@@ -88,10 +88,8 @@ def create_event():
         if success:
             flash('Event added!', category='success')
             team_players = get_players_for_team(str(form.team.data))
-            print(team_players)
             for player in team_players:
-                print(player['Email'])
-                set_rsvp(player['Email'], event_id)
+                create_rsvp(player['Email'], event_id)
             return render_template('base.html')
         else:
             flash('You\'re seriously screwed', category='danger')
