@@ -122,6 +122,7 @@ def get_all_teams():
     g.db.commit()
     return cursor.fetchall()
 
+
 def create_user(email, fname, lname):
     cursor = g.db.cursor()
     user_query = '''
@@ -133,6 +134,6 @@ def create_user(email, fname, lname):
 
 
 def get_usersname(email):
-    cursor = g.db.execute('SELECT name FROM User WHERE email= :email', {'email': email})
+    cursor = g.db.execute('SELECT First_Name, Last_Name FROM User WHERE email= :email', {'email': email})
     g.db.commit()
     return cursor.fetchone()

@@ -2,12 +2,16 @@
 
 {% block content %}
 
-
-    {% for event in events %}
-        <div class="row event-row">
+    <div class="row">
+        <div class="col-xs-4 col-xs-offset-1">
             {% if user %}
                 <h2>Events for {{ user }}</h2>
             {% endif %}
+        </div>
+    </div>
+
+    {% for event in events %}
+        <div class="row event-row">
             <div class="row">
                 <div class="row">
                     <div class="col-xs-4"><h3>{{ event.name }}</h3></div>

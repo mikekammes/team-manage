@@ -51,9 +51,11 @@ class SignUpForm(Form):
     email = StringField('Email', validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
+
 class GetTeamPlayersForm(Form):
     team = SelectField('Select Team', validators=[DataRequired()])
     submit = SubmitField('View Players')
+
 
 # Routes
 
@@ -101,8 +103,11 @@ def see_events(email):
     else:
         events = get_event_for_user(email)
 
-        name = get_usersname(email)[0]
-        return render_template('show_events.html', events=events, user=name)
+        user = get_usersname(email)
+        first = user['first_name']
+        last = user['last_name']
+        name = first + ' ' + last
+        return render_template('show-events.html', events=events, user=name)
 
 
 @app.route('/team/players/', methods=['GET', 'POST'])
