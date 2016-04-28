@@ -109,16 +109,19 @@ def get_players():
     all_teams = get_all_teams()
     team_list = []
     for team in all_teams:
+        print(team['TeamID'], team['Name'])
         team_list.append((str(team['TeamID']), team['Name']))
     form.team.choices = team_list
     if form.validate_on_submit():
-        return url_for('show-players.html', team_id=form.team.data)
+        return redirect(url_for('see_players', team_id=int(form.team.data)))
     else:
-        return render_template('show-players-form.html')
+        print("Form failed with team id of: ", form.team.data)
+        return render_template('show-players-form.html', form=form)
 
 
 @app.route('/team/players/<team_id>')
 def see_players(team_id):
+    print("Team id is: ", team_id)
     if team_id is None:
         all_players = get_all_players()
         return render_template('show-players.html', players=all_players)

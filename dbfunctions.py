@@ -119,11 +119,10 @@ def add_event(team_id, email):
     return cursor.rowcount
 
 
-
 def get_all_teams():
     cursor = g.db.execute('SELECT TeamID, Name FROM Team')
     g.db.commit()
-    return cursor
+    return cursor.fetchall()
 
 def create_user(email, fname, lname):
     cursor = g.db.cursor()
