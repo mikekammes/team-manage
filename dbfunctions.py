@@ -77,7 +77,7 @@ def add_team(team_name, coach_email):
 
 def get_players_for_team(team_id):
     query = '''
-        SELECT * FROM Plays_For NATURAL JOIN Team WHERE TeamID = :team_id AND Joined
+        SELECT * FROM Plays_For NATURAL JOIN Team NATURAL JOIN User WHERE TeamID = :team_id AND Joined
     '''
     cursor = g.db.execute(query, {'team_id': team_id})
     g.db.commit()
