@@ -61,7 +61,8 @@ class GetTeamPlayersForm(Form):
 
 class RSVPForm(Form):
     email = SelectField('Email', validators=[DataRequired()], choices=[])
-    attending = SelectField('Are you attending?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')])
+    attending = SelectField('Are you attending?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')],
+                            coerce=str)
     submit = SubmitField('RSVP')
 
 
@@ -127,7 +128,6 @@ def get_players():
     all_teams = get_all_teams()
     team_list = []
     for team in all_teams:
-        print(team['TeamID'], team['Name'])
         team_list.append((str(team['TeamID']), team['Name']))
     form.team.choices = team_list
     if form.validate_on_submit():
@@ -138,13 +138,15 @@ def get_players():
 
 @app.route('/team/players/<team_id>')
 def see_players(team_id):
-    print("Team id is: ", team_id)
     if team_id is None:
         all_players = get_all_players()
         return render_template('show-players.html', players=all_players)
     else:
         players = get_players_for_team(team_id)
-        return render_template('show-players.html', players=players)
+        team = ''
+        for player in players:
+            team = player['name']
+        return render_template('show-players.html', players=players, team=team)
 
 
 @app.route('/team/create/', methods=['GET', 'POST'])

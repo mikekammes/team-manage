@@ -1,10 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <h2>Roster for {{ team }}</h2>
     {% for player in players %}
-        {{ player.first_name }}
-        {{ player.last_name }}
-        {{ player.email }}
-        {{ player.name }}
+        <div class="row event-row">
+            <div class="col-xs-2">
+                {{ player.first_name }}
+                {{ player.last_name }}
+            </div>
+            <div class="col-xs-2">
+                {{ player.email }}
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}
