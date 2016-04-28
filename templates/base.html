@@ -37,22 +37,24 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
 
-                <a href="{{ url_for('sign_up') }}">Sign Up</a>
-
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                   aria-expanded="false">Events<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ url_for('create_event') }}">Create</a></li>
-                    <li><a href="{{ url_for('see_events') }}">View</a></li>
-                </ul>
-
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                   aria-expanded="false">Team<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ url_for('create_team') }}">Create</a></li>
-                    <li><a href="{{ url_for('add_player') }}">Add Player</a></li>
-                    <li><a href="{{ url_for('get_players') }}">View Players</a></li>
-                </ul>
+                <li><a href="{{ url_for('sign_up') }}">Sign Up</a></li>
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">Events<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('create_event') }}">Create</a></li>
+                        <li><a href="{{ url_for('see_events') }}">View</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">Team<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('create_team') }}">Create</a></li>
+                        <li><a href="{{ url_for('add_player') }}">Add Player</a></li>
+                        <li><a href="{{ url_for('get_players') }}">View Players</a></li>
+                    </ul>
+                </li>
 
 
             </ul>
