@@ -65,7 +65,10 @@ def add_team(team_name, coach_email):
         INSERT INTO Team ( Name ) VALUES (:team_name)
     '''
     cursor.execute(team_query, {'team_name': team_name})
-    teamid = cursor.lastrowid
+    team_row = cursor.lastrowid
+    teamid = g.db.execute('SELECT TeamID FROM Team WHERE ROWID = :row', {'row': team_row})
+
+
     print('Team id is:', teamid)
     coaches_query = '''
         INSERT INTO Coaches VALUES (:coach_email, :team_id)
@@ -77,11 +80,21 @@ def add_team(team_name, coach_email):
 
 def get_players_for_team(team_id):
     query = '''
-        SELECT * FROM "User" NATURAL JOIN Plays_For NATURAL JOIN Team WHERE TeamID = :team_id AND Joined
+        SELECT * FROM Plays_For NATURAL JOIN Team WHERE TeamID = :team_id AND Joined
     '''
     cursor = g.db.execute(query, {'team_id': team_id})
     g.db.commit()
-    return cursor
+    return cursor.fetchall()
+
+
+def set_rsvp(email, event_id):
+    cursor = g.db.cursor()
+    user_query = '''
+            INSERT INTO Attending_Event (Email, EventID, Attending) VALUES (:email, :eventid, 0)
+        '''
+    cursor.execute(user_query, {'email': email, 'eventid': event_id})
+    g.db.commit()
+    return cursor.rowcount
 
 
 def get_all_players():
@@ -108,13 +121,21 @@ def add_players(team_id, email, fname, lname, number, position):
 
 
 def add_event(title, team_id, event_type, date_time, location):
+    cursor = g.db.cursor()
     query = '''
         INSERT INTO Event ( Title, DateTime, Location, TeamID, TypeID) VALUES (:title, :date_time, :location, :team_id, :event_type)
         '''
-    cursor = g.db.execute(query, {'title': title, 'team_id': team_id, 'event_type': event_type, 'date_time': date_time,
+    cursor.execute(query, {'title': title, 'team_id': team_id, 'event_type': event_type, 'date_time': date_time,
                                   'location': location})
+    event_row = cursor.lastrowid
+    event_cur = g.db.execute('SELECT EventID FROM Event WHERE ROWID = :row', {'row': event_row})
+    event_id = event_cur.fetchone()
+    if event_id is None:
+        print("Couldn't add event")
+    else:
+        print("Event id is: ", event_id[0])
     g.db.commit()
-    return cursor.rowcount
+    return cursor.rowcount, event_id[0]
 
 
 def get_all_teams():
