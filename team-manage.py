@@ -3,9 +3,11 @@ import datetime
 from wtforms import StringField, SubmitField, SelectField, RadioField, TextAreaField, SelectMultipleField, DateField, \
     DateTimeField
 from flask.ext.wtf import Form
+from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
-    add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams, get_usersname, create_rsvp
+    add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams, get_usersname, \
+    create_rsvp, get_emails_from_team, RSVP
 
 now = datetime.datetime.now()
 
@@ -57,6 +59,12 @@ class GetTeamPlayersForm(Form):
     submit = SubmitField('View Players')
 
 
+class RSVPForm(Form):
+    email = SelectField('Email', validators=[DataRequired()], choices=[])
+    attending = SelectField('Are you attending?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')])
+    submit = SubmitField('RSVP')
+
+
 # Routes
 
 @app.route('/')
@@ -84,7 +92,7 @@ def create_event():
     form.team.choices = team_list
     if form.validate_on_submit():
         success, event_id = add_event(form.title.data, str(form.team.data), int(form.eventType.data), form.date.data,
-                            form.location.data)
+                                      form.location.data)
         if success:
             flash('Event added!', category='success')
             team_players = get_players_for_team(str(form.team.data))
@@ -93,6 +101,7 @@ def create_event():
             return render_template('base.html')
         else:
             flash('You\'re seriously screwed', category='danger')
+            return render_template('create-event.html', form=form)
     else:
         return render_template('create-event.html', form=form)
 
@@ -125,7 +134,6 @@ def get_players():
     if form.validate_on_submit():
         return redirect(url_for('see_players', team_id=int(form.team.data)))
     else:
-        print("Form failed with team id of: ", form.team.data)
         return render_template('show-players-form.html', form=form)
 
 
@@ -151,6 +159,7 @@ def create_team():
             return redirect(url_for('add_player'))
         else:
             flash('You\'re seriously screwed', category='danger')
+            return render_template('create-team.html', form=form)
     else:
         return render_template('create-team.html', form=form)
 
@@ -171,6 +180,7 @@ def add_player():
             return render_template('add-player.html', form=form)
         else:
             flash('You\'re seriously screwed', category='danger')
+            return render_template('add-player.html', form=form)
     else:
         return render_template('add-player.html', form=form)
 
@@ -186,8 +196,29 @@ def sign_up():
             return render_template('base.html')
         else:
             flash('You\'re seriously screwed', category='danger')
+            return render_template('sign-up.html', form=form)
     else:
         return render_template('sign-up.html', form=form)
+
+
+@app.route('/event/<event_id>/rsvp', methods=['GET', 'POST'])
+def rsvp(event_id):
+    form = RSVPForm()
+    team_emails = get_emails_from_team(event_id)
+    email_list = []
+    for email in team_emails:
+        email_list.append((email['email'], email['email']))
+    form.email.choices = email_list
+    if form.validate_on_submit():
+        success = RSVP(event_id, form.email.data, form.attending.data)
+        if success == 1:
+            flash("RSVP submitted successfully!", category='success')
+            return render_template('base.html')
+        else:
+            flash('You RSVP\'d for multiple people', category='danger')
+            return render_template('rsvp.html', form=form)
+    else:
+        return render_template('rsvp.html', form=form)
 
 
 if __name__ == '__main__':

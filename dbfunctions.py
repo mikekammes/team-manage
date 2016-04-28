@@ -159,3 +159,25 @@ def get_usersname(email):
     cursor = g.db.execute('SELECT First_Name, Last_Name FROM User WHERE email= :email', {'email': email})
     g.db.commit()
     return cursor.fetchone()
+
+
+def get_emails_from_team(event_id):
+    query = '''
+        SELECT User.Email FROM User
+        INNER JOIN Plays_For ON User.Email = Plays_For.Email
+        INNER JOIN Team ON Plays_For.TeamID =Team.TeamID
+        INNER JOIN Event ON Event.TeamID = Team.TeamID
+        WHERE Event.EventID = :event_id
+        ORDER BY User.Email
+        '''
+    cursor = g.db.execute(query, {'event_id': event_id})
+    g.db.commit()
+    return cursor.fetchall()
+
+
+def RSVP(event_id, email, attending_status):
+    query = '''
+        UPDATE attending_event SET Attending = :attending WHERE EventID = :event_id AND Email = :email
+    '''
+    cursor = g.db.execute(query, {'event_id': event_id, 'email': email, 'attending': attending_status})
+    return cursor.rowcount
