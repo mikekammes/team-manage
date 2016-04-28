@@ -83,7 +83,6 @@ def add_team(team_name, coach_email):
     team_row = cursor.lastrowid
     team_cur = g.db.execute('SELECT TeamID FROM Team WHERE ROWID = :row', {'row': team_row})
     teamid = team_cur.fetchone()[0]
-    print("Team id is: ", teamid)
     coaches_query = '''
         INSERT INTO Coaches VALUES (:coach_email, :team_id)
     '''
@@ -94,7 +93,7 @@ def add_team(team_name, coach_email):
 
 def get_players_for_team(team_id):
     query = '''
-        SELECT * FROM Plays_For NATURAL JOIN Team NATURAL JOIN User WHERE TeamID = :team_id 
+        SELECT * FROM Plays_For NATURAL JOIN Team NATURAL JOIN User WHERE TeamID = :team_id
     '''
     cursor = g.db.execute(query, {'team_id': team_id})
     g.db.commit()
