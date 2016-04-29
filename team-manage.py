@@ -107,15 +107,13 @@ def create_event():
         return render_template('create-event.html', form=form)
 
 
-@app.route('/events/delete/<event_id>', methods=['GET', 'POST'])
+@app.route('/events/delete/<event_id>')
 def event_remover(event_id):
-    print 'in event remover'
     success = delete_event(event_id)
     if success == 1:
         flash("Event Deleted", category='danger')
         return redirect(url_for('see_events'))
     else:
-        print success
         return redirect(url_for('see_events'))
 
 
