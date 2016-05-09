@@ -203,3 +203,25 @@ def RSVP(event_id, email, attending_status):
     cursor = g.db.execute(query, {'event_id': event_id, 'email': email, 'attending': attending_status})
     g.db.commit()
     return cursor.rowcount
+
+
+def get_team_invites(email):
+    query = '''
+        SELECT Team.Name, Team.TeamID
+        FROM User
+        INNER JOIN Plays_For ON User.Email = Plays_For.Email
+        INNER JOIN Team ON Plays_For.TeamID =Team.TeamID
+        WHERE User.Email = :email
+        '''
+    cursor = g.db.execute(query, {'email': email})
+    g.db.commit()
+    return cursor.fetchall()
+
+
+def accept_invite(email, team_id, accept_status):
+    query = '''
+      UPDATE Plays_For SET Joined = :accept_status WHERE TeamID = :team_id AND Email = :email
+    '''
+    cursor = g.db.execute(query, {'team_id': team_id, 'email': email, 'accepting': accept_status})
+    g.db.commit()
+    return cursor.rowcount

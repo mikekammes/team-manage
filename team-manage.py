@@ -7,7 +7,7 @@ from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
     add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams, get_usersname, \
-    create_rsvp, get_emails_from_team, RSVP, delete_event
+    create_rsvp, get_emails_from_team, RSVP, delete_event, get_team_invites, accept_invite
 
 now = datetime.datetime.now()
 
@@ -64,6 +64,13 @@ class RSVPForm(Form):
     attending = SelectField('Are you attending?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')],
                             coerce=str)
     submit = SubmitField('RSVP')
+
+
+class JoinTeamForm(Form):
+    team = SelectField('Team', validators=[DataRequired()], choices=[])
+    accept = SelectField('Do you want to play?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')],
+                            coerce=str)
+    submit = SubmitField('Submit')
 
 
 # Routes
@@ -230,6 +237,31 @@ def rsvp(event_id):
             return render_template('rsvp.html', form=form)
     else:
         return render_template('rsvp.html', form=form)
+
+
+@app.route('/player/<player>/join', methods=['GET', 'POST'])
+def join_team(player):
+    print("Starting")
+    form = JoinTeamForm()
+    teams = get_team_invites(player)
+    team_list = []
+    for team in teams:
+        team_list.append((team['TeamID'], team['name']))
+    form.team.choices = team_list
+    print(form.team.choices)
+    if form.validate_on_submit():
+        print("Validating")
+        success = accept_invite(player, form.team.data, form.accept.data)
+        if success == 1:
+            flash("Saved!", category='success')
+            return render_template('base.html')
+        else:
+            print("Working")
+            flash('Failed', category='danger')
+            return render_template('join_team.html', form=form)
+    else:
+        print("Not validating")
+        return render_template('join_team.html', form=form)
 
 
 if __name__ == '__main__':
