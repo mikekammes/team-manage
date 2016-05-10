@@ -70,7 +70,7 @@ class RSVPForm(Form):
 class JoinTeamForm(Form):
     team = SelectField('Team', validators=[DataRequired()], choices=[])
     accept = SelectField('Do you want to play?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')],
-                            coerce=str)
+                         coerce=str)
     submit = SubmitField('Submit')
 
 
@@ -201,7 +201,8 @@ def add_player():
             else:
                 success = invite_player(form.team.data, form.email.data, int(form.number.data), form.position.data)
         else:
-            success = add_player_and_invite(form.team.data, form.email.data, form.fname.data, form.lname.data, form.number.data, form.position.data)
+            success = add_player_and_invite(form.team.data, form.email.data, form.fname.data, form.lname.data,
+                                            form.number.data, form.position.data)
         if success:
             flash('Player added!', category='success')
             return render_template('add-player.html', form=form)
@@ -255,7 +256,7 @@ def join_team(player):
     teams = get_team_invites(player)
     team_list = []
     for team in teams:
-        team_list.append((team['TeamID'], team['name']))
+        team_list.append((str(team['TeamID']), str(team['name'])))
     form.team.choices = team_list
     print(form.team.choices)
     if form.validate_on_submit():
@@ -268,9 +269,8 @@ def join_team(player):
             print("Working")
             flash('Failed', category='danger')
             return render_template('join_team.html', form=form)
-    else:
-        print("Not validating")
-        return render_template('join_team.html', form=form)
+    print("Not validating")
+    return render_template('join_team.html', form=form)
 
 
 if __name__ == '__main__':
