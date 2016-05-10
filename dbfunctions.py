@@ -127,12 +127,34 @@ def get_all_players():
     return cursor.fetchall()
 
 
-def add_players(team_id, email, fname, lname, number, position):
+def player_exists(email):
+    cursor = g.db.execute('SELECT COUNT(*) FROM User WHERE Email = :email', {'email': email})
+    g.db.commit()
+    return cursor.fetchall()
+
+
+def player_plays_for_team(email, team_id):
+    cursor = g.db.execute('SELECT COUNT(*) FROM User INNER JOIN Plays_For ON User.Email = Plays_For.Email WHERE User.Email = :email AND TeamID = :team_id', {'email': email, 'team_id': team_id})
+    g.db.commit()
+    return cursor.fetchall()
+
+
+def add_player_and_invite(team_id, email, fname, lname, number, position):
     cursor = g.db.cursor()
     user_query = '''
         INSERT INTO "User" ( Email, First_Name, Last_Name, Password ) VALUES (:email, :fname, :lname, 'pass')
     '''
     cursor.execute(user_query, {'email': email, 'fname': fname, 'lname': lname})
+    plays_query = '''
+        INSERT INTO Plays_For VALUES (:email, :team_id, :num, :pos, NULL)
+    '''
+    cursor.execute(plays_query, {'email': email, 'team_id': team_id, 'num': number, 'pos': position})
+    g.db.commit()
+    return cursor.rowcount
+
+
+def invite_player(team_id, email, number, position):
+    cursor = g.db.cursor()
     plays_query = '''
         INSERT INTO Plays_For VALUES (:email, :team_id, :num, :pos, NULL)
     '''

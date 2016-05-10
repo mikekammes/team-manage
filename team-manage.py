@@ -1,13 +1,14 @@
 from flask import Flask, render_template, flash, get_flashed_messages, request, redirect, url_for
 import datetime
 from wtforms import StringField, SubmitField, SelectField, RadioField, TextAreaField, SelectMultipleField, DateField, \
-    DateTimeField
+    DateTimeField, IntegerField
 from flask.ext.wtf import Form
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
-    add_team, get_all_players, get_players_for_team, add_players, create_user, get_all_teams, get_usersname, \
-    create_rsvp, get_emails_from_team, RSVP, delete_event, get_team_invites, accept_invite
+    add_team, get_all_players, get_players_for_team, add_player_and_invite, create_user, get_all_teams, get_usersname, \
+    create_rsvp, get_emails_from_team, RSVP, delete_event, get_team_invites, accept_invite, player_exists, \
+    player_plays_for_team, invite_player
 
 now = datetime.datetime.now()
 
@@ -40,7 +41,7 @@ class AddPlayerForm(Form):
     fname = StringField('First name of player', validators=[DataRequired()])
     lname = StringField('Last name of player', validators=[DataRequired()])
     position = StringField('Player position', validators=[DataRequired()])
-    number = StringField('Player number', validators=[DataRequired()])
+    number = IntegerField('Player number', validators=[DataRequired()])
     email = StringField('Email of player', validators=[DataRequired()])
     team = SelectField('Select Team', validators=[DataRequired()])
 
@@ -191,8 +192,16 @@ def add_player():
         team_list.append((str(team['TeamID']), team['Name']))
     form.team.choices = team_list
     if form.validate_on_submit():
-        success = add_players(form.team.data, form.email.data, form.fname.data, form.lname.data, int(form.number.data),
-                              form.position.data)
+        exists = player_exists(form.email.data)[0][0]
+        if exists:
+            plays_for_team = player_plays_for_team(form.email.data, form.team.data)[0][0]
+            if plays_for_team:
+                flash('Player already invited to your team!', category='danger')
+                return render_template('add-player.html', form=form)
+            else:
+                success = invite_player(form.team.data, form.email.data, int(form.number.data), form.position.data)
+        else:
+            success = add_player_and_invite(form.team.data, form.email.data, form.fname.data, form.lname.data, form.number.data, form.position.data)
         if success:
             flash('Player added!', category='success')
             return render_template('add-player.html', form=form)
