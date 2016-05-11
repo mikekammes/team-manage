@@ -88,7 +88,7 @@ class CreateContactForm(Form):
 
 class NotificationForm(Form):
     type = SelectField('Event Type', validators=[DataRequired()], choices=[])
-    time = DateTimeField('Date of event', validators=[DataRequired()], format='%d %H:%M', default=now)
+    time = DateTimeField('Advance Notice (In Minutes)', validators=[DataRequired()], format='%M',)
     submit = SubmitField('Set settings')
 
 

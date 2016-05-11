@@ -243,7 +243,7 @@ def get_team_invites(email):
 def accept_invite(email, team_id, accept_status):
     print("Accept invite:", email, team_id, accept_status)
     query = '''
-      UPDATE Plays_For SET Joined = :accept_status WHERE TeamID = :team_id AND Email = :email
+      UPDATE Plays_For SET Joined = :accepting WHERE TeamID = :team_id AND Email = :email
     '''
     cursor = g.db.execute(query, {'team_id': team_id, 'email': email, 'accepting': accept_status})
     g.db.commit()
