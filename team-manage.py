@@ -274,12 +274,13 @@ def join_team(player):
     teams = get_team_invites(player)
     team_list = []
     for team in teams:
-        team_list.append((team['teamid'], str(team['name'])))
+        team_list.append((str(team['teamid']), str(team['name'])))
     form.team.choices = team_list
     print(form.team.choices)
     if form.validate_on_submit():
         print("Validating")
-        success = accept_invite(player, form.team.data, form.accept.data)
+        print(player, int(form.team.data), form.accept.data)
+        success = accept_invite(player, int(form.team.data), int(form.accept.data))
         if success == 1:
             flash("Saved!", category='success')
             return render_template('base.html')
@@ -315,7 +316,7 @@ def edit_notifications(contact_id):
     event_types = get_event_types()
     type_list = []
     for e_type in event_types:
-        type_list.append((e_type['typeid'], e_type['description']))
+        type_list.append((str(e_type['typeid']), e_type['description']))
     form.type.choices = type_list
     if form.validate_on_submit():
         print("Validated")
@@ -331,6 +332,7 @@ def edit_notifications(contact_id):
             flash('You\'re seriously screwed', category='danger')
             return render_template('edit-notifications.html', form=form)
     else:
+        flash("Not validating", category='danger')
         return render_template('edit-notifications.html', form=form)
 
 

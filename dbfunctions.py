@@ -241,6 +241,7 @@ def get_team_invites(email):
 
 
 def accept_invite(email, team_id, accept_status):
+    print("Accept invite:", email, team_id, accept_status)
     query = '''
       UPDATE Plays_For SET Joined = :accept_status WHERE TeamID = :team_id AND Email = :email
     '''
