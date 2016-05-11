@@ -88,7 +88,7 @@ class CreateContactForm(Form):
 
 class NotificationForm(Form):
     type = SelectField('Event Type', validators=[DataRequired()], choices=[])
-    time = DateTimeField('Date of event', validators=[DataRequired()], format='%d %H:%M', default=now)
+    time = DateTimeField('Advance Notice (In Minutes)', validators=[DataRequired()], format='%M',)
     submit = SubmitField('Set settings')
 
 
@@ -274,7 +274,7 @@ def join_team(player):
     teams = get_team_invites(player)
     team_list = []
     for team in teams:
-        team_list.append((team['teamid'], str(team['name'])))
+        team_list.append((str(team['teamid']), str(team['name'])))
     form.team.choices = team_list
     print(form.team.choices)
     if form.validate_on_submit():
