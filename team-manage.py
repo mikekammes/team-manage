@@ -8,7 +8,7 @@ from wtforms.validators import DataRequired
 from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
     add_team, get_all_players, get_players_for_team, add_player_and_invite, create_user, get_all_teams, get_usersname, \
     create_rsvp, get_emails_from_team, RSVP, delete_event, get_team_invites, accept_invite, player_exists, \
-    player_plays_for_team, invite_player
+    player_plays_for_team, invite_player, add_contact, get_event_types, setting_exists, create_setting,  update_setting\
 
 now = datetime.datetime.now()
 
@@ -62,16 +62,34 @@ class GetTeamPlayersForm(Form):
 
 class RSVPForm(Form):
     email = SelectField('Email', validators=[DataRequired()], choices=[])
+    #email = StringField('TeamID', validators=[DataRequired()])
+    #accept = SelectField('Do you want to play?', validators=[DataRequired()], choices=[(0, 'No'), (1, 'Yes')],
+    #                                         coerce=str)
     attending = SelectField('Are you attending?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')],
-                            coerce=str)
+                    coerce=str)
     submit = SubmitField('RSVP')
 
 
 class JoinTeamForm(Form):
+    #team = StringField('TeamID', validators=[DataRequired()])
+    #accept = IntegerField('Accept', validators=[DataRequired()])
     team = SelectField('Team', validators=[DataRequired()], choices=[])
     accept = SelectField('Do you want to play?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')],
                          coerce=str)
     submit = SubmitField('Submit')
+
+
+class CreateContactForm(Form):
+    is_phone = SelectField('Contact type?', validators=[DataRequired()], choices=[('0', 'Email'), ('1', 'Phone')],
+                         coerce=str)
+    contact = StringField('Contact', validators=[DataRequired()])
+    submit = SubmitField('Create contact')
+
+
+class NotificationForm(Form):
+    type = SelectField('Event Type', validators=[DataRequired()], choices=[])
+    time = DateTimeField('Date of event', validators=[DataRequired()], format='%d %H:%M', default=now)
+    submit = SubmitField('Set settings')
 
 
 # Routes
@@ -237,6 +255,7 @@ def rsvp(event_id):
     for email in team_emails:
         email_list.append((email['email'], email['email']))
     form.email.choices = email_list
+    print(form.email.choices)
     if form.validate_on_submit():
         success = RSVP(event_id, form.email.data, form.attending.data)
         if success == 1:
@@ -251,12 +270,11 @@ def rsvp(event_id):
 
 @app.route('/player/<player>/join', methods=['GET', 'POST'])
 def join_team(player):
-    print("Starting")
     form = JoinTeamForm()
     teams = get_team_invites(player)
     team_list = []
     for team in teams:
-        team_list.append((str(team['TeamID']), str(team['name'])))
+        team_list.append((team['teamid'], str(team['name'])))
     form.team.choices = team_list
     print(form.team.choices)
     if form.validate_on_submit():
@@ -268,9 +286,52 @@ def join_team(player):
         else:
             print("Working")
             flash('Failed', category='danger')
-            return render_template('join_team.html', form=form)
+            return render_template('join-team.html', form=form)
+    else:
+        flash("Dang it", category='danger')
     print("Not validating")
-    return render_template('join_team.html', form=form)
+    return render_template('join-team.html', form=form)
+
+
+@app.route('/contacts/<player>/create', methods=['GET', 'POST'])
+def create_contact(player):
+    form = CreateContactForm()
+    if form.validate_on_submit():
+        success, contact_id = add_contact(player, form.is_phone.data, form.contact.data)
+        if success:
+            print("Contact_id", contact_id)
+            flash('Contact added!', category='success')
+            return redirect(url_for('edit_notifications', contact_id=contact_id))
+        else:
+            flash('You\'re seriously screwed', category='danger')
+            return render_template('create-contact.html', form=form)
+    else:
+        return render_template('create-contact.html', form=form)
+
+
+@app.route('/contacts/<contact_id>', methods=['GET', 'POST'])
+def edit_notifications(contact_id):
+    form = NotificationForm()
+    event_types = get_event_types()
+    type_list = []
+    for e_type in event_types:
+        type_list.append((e_type['typeid'], e_type['description']))
+    form.type.choices = type_list
+    if form.validate_on_submit():
+        print("Validated")
+        exists = setting_exists(contact_id, form.type.data)[0][0]
+        if exists:
+            success = create_setting(contact_id, form.type.data, form.time.data)
+        else:
+            success = update_setting(contact_id, form.type.data, form.time.data)
+        if success:
+            flash('Setting saved', category='success')
+            return render_template('create-contact.html', form=form)
+        else:
+            flash('You\'re seriously screwed', category='danger')
+            return render_template('edit-notifications.html', form=form)
+    else:
+        return render_template('edit-notifications.html', form=form)
 
 
 if __name__ == '__main__':

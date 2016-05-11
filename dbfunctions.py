@@ -247,3 +247,51 @@ def accept_invite(email, team_id, accept_status):
     cursor = g.db.execute(query, {'team_id': team_id, 'email': email, 'accepting': accept_status})
     g.db.commit()
     return cursor.rowcount
+
+
+def add_contact(email, is_phone, contact):
+    cursor = g.db.cursor()
+    user_query = '''
+        INSERT INTO "Contact" ( Email, Contact, isPhone ) VALUES (:email, :contact, :is_phone)
+    '''
+
+    cursor.execute(user_query, {'email': email, 'contact': contact, 'is_phone': is_phone})
+    contact_row = cursor.lastrowid
+    contact_cur = g.db.execute('SELECT ContactID FROM Contact WHERE ROWID = :row', {'row': contact_row})
+    teamid = contact_cur.fetchone()[0]
+    g.db.commit()
+    return cursor.rowcount, teamid
+
+
+def get_event_types():
+    cursor = g.db.execute('SELECT TypeID, Description FROM Event_Type')
+    g.db.commit()
+    return cursor.fetchall()
+
+
+def setting_exists(contact, type):
+    cursor = g.db.execute('SELECT COUNT(*) FROM Notified_for WHERE ContactID = :contact AND TypeID = :type', {'contact': contact, 'type': type})
+    g.db.commit()
+    return cursor.fetchall()
+
+
+def create_setting(contact, type_id, time):
+    cursor = g.db.cursor()
+    user_query = '''
+                INSERT INTO Notified_For VALUES (:contact, :type_id, :notification_time )
+            '''
+    cursor.execute(user_query, {'contact': contact, 'type_id': type_id, 'notification_time': time})
+    g.db.commit()
+    return cursor.rowcount
+
+
+def update_setting(contact, type_id, time):
+    cursor = g.db.cursor()
+    user_query = '''
+                UPDATE Notified_For
+                SET 'notificationtime' = :notification_time
+                WHERE 'contact' = :contact, 'typeid' = type_id)
+            '''
+    cursor.execute(user_query, {'contact': contact, 'type_id': type_id, 'notification_time': time})
+    g.db.commit()
+    return cursor.rowcount

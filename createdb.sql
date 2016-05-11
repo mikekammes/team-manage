@@ -48,10 +48,10 @@ CREATE TABLE Notified_For (
 
 DROP TABLE IF EXISTS Contact;
 CREATE TABLE Contact (
-  ContactID Integer,
+  ContactID Integer PRIMARY KEY,
+  Email INTEGER REFERENCES User(Email),
   Contact Text NOT NULL,
-  isPhone Boolean NOT NULL,
-  PRIMARY KEY (ContactID, Contact)
+  isPhone Boolean NOT NULL
 );
 
 DROP TABLE IF EXISTS Uses;

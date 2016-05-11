@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+
+
+{% if form.errors %}
+    <div class="row">
+        <div class="col-xs-12">
+            <ul>
+                {% for field_name in form.errors %}
+                    {% for field_error in form.errors[field_name] %}
+                        <div class="alert alert-danger alert-dismissible text-center" role="alert">
+                            <button type="button" class="btn btn-secondary close" data-dismiss="alert"
+                                    aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            {{ form[field_name].label }}: {{ field_error }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endif %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-6 col-xs-offset-3">
+            <form method="POST" class="form-box">
+                <div class="row">{{ form.hidden_tag() }}</div>
+                <div class="row">
+                    <div class="col-xs-6 ">
+                        {{ form.type.label }}
+                    </div>
+                    <div class="col-xs-6 ">{{ form.type() }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 ">
+                        {{ form.time.label }}
+                    </div>
+                    <div class="col-xs-6 ">{{ form.time() }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 ">{{ form.submit }}</div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
