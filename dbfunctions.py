@@ -290,9 +290,15 @@ def update_setting(contact, type_id, time):
     cursor = g.db.cursor()
     user_query = '''
                 UPDATE Notified_For
-                SET 'notificationtime' = :notification_time
-                WHERE 'contact' = :contact, 'typeid' = type_id)
+                SET notificationtime = :notification_time
+                WHERE contactid = :contact AND typeid = :type_id
             '''
     cursor.execute(user_query, {'contact': contact, 'type_id': type_id, 'notification_time': time})
     g.db.commit()
     return cursor.rowcount
+
+
+def get_contact_text(contactid):
+    cursor = g.db.execute('SELECT Contact FROM Contact WHERE contactid= :contact', {'contact': contactid})
+    g.db.commit()
+    return cursor.fetchone()
