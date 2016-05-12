@@ -9,6 +9,7 @@ from dbfunctions import open_db_connection, close_db_connection, add_event, get_
     add_team, get_all_players, get_players_for_team, add_player_and_invite, create_user, get_all_teams, get_usersname, \
     create_rsvp, get_emails_from_team, RSVP, delete_event, get_team_invites, accept_invite, player_exists, \
     player_plays_for_team, invite_player, add_contact, get_event_types, setting_exists, create_setting,  update_setting\
+    , get_contact_text
 
 now = datetime.datetime.now()
 
@@ -280,7 +281,8 @@ def join_team(player):
     print(form.team.choices)
     if form.validate_on_submit():
         print("Validating")
-        success = accept_invite(player, form.team.data, form.accept.data)
+        print(player, int(form.team.data), form.accept.data)
+        success = accept_invite(player, int(form.team.data), int(form.accept.data))
         if success == 1:
             flash("Saved!", category='success')
             return render_template('base.html')
@@ -319,28 +321,27 @@ def create_contact():
 @app.route('/contacts/<contact_id>', methods=['GET', 'POST'])
 def edit_notifications(contact_id):
     form = NotificationForm()
+    contact_text = str(get_contact_text(contact_id)[0])
     event_types = get_event_types()
     type_list = []
     for e_type in event_types:
         type_list.append((str(e_type['typeid']), str(e_type['description'])))
     form.type.choices = type_list
-    print form.type.choices
     if form.validate_on_submit():
-        print("Validated")
         exists = setting_exists(contact_id, form.type.data)[0][0]
         if exists:
-            success = create_setting(contact_id, form.type.data, form.time.data)
-        else:
             success = update_setting(contact_id, form.type.data, form.time.data)
+        else:
+            success = create_setting(contact_id, form.type.data, form.time.data)
         if success:
             flash('Setting saved', category='success')
-            return render_template('create-contact.html', form=form)
+            return render_template('edit-notifications.html', form=form, contact=contact_text)
         else:
             flash('You\'re seriously screwed', category='danger')
-            return render_template('edit-notifications.html', form=form)
+            return render_template('edit-notifications.html', form=form, contact=contact_text)
     else:
-        flash('crap', category='danger')
-        return render_template('edit-notifications.html', form=form)
+
+        return render_template('edit-notifications.html', form=form, contact=contact_text)
 
 
 if __name__ == '__main__':

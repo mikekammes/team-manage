@@ -241,6 +241,7 @@ def get_team_invites(email):
 
 
 def accept_invite(email, team_id, accept_status):
+    print("Accept invite:", email, team_id, accept_status)
     query = '''
       UPDATE Plays_For SET Joined = :accepting WHERE TeamID = :team_id AND Email = :email
     '''
@@ -289,9 +290,15 @@ def update_setting(contact, type_id, time):
     cursor = g.db.cursor()
     user_query = '''
                 UPDATE Notified_For
-                SET 'notificationtime' = :notification_time
-                WHERE ContactID = :contact AND typeid = type_id
+                SET notificationtime = :notification_time
+                WHERE contactid = :contact AND typeid = :type_id
             '''
     cursor.execute(user_query, {'contact': contact, 'type_id': type_id, 'notification_time': time})
     g.db.commit()
     return cursor.rowcount
+
+
+def get_contact_text(contactid):
+    cursor = g.db.execute('SELECT Contact FROM Contact WHERE contactid= :contact', {'contact': contactid})
+    g.db.commit()
+    return cursor.fetchone()
