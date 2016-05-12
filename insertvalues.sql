@@ -44,3 +44,21 @@ INSERT INTO "Attending_Event" VALUES('mike@example.com', 6, NULL);
 INSERT INTO "Attending_Event" VALUES('mitch@example.com', 4, NULL);
 INSERT INTO "Attending_Event" VALUES('mitch@example.com', 5, NULL);
 INSERT INTO "Attending_Event" VALUES('mitch@example.com', 6, NULL);
+
+INSERT INTO "Contact" VALUES(1, 'todd@example.com', '8144048227', 1);
+INSERT INTO "Contact" VALUES(2, 'todd@example.com', 'todd@second.com', 0);
+INSERT INTO "Contact" VALUES(3, 'mike@example.com', 'mike@second.com', 0);
+INSERT INTO "Contact" VALUES(4, 'joel@example.com', '5551112222', 1);
+INSERT INTO "Contact" VALUES(5, 'mitch@example.com', '5552223333', 1);
+
+INSERT INTO "Notified_For" VALUES(1, 1, '1900-01-01 05:00:00')
+INSERT INTO "Notified_For" VALUES(1, 2, '1900-01-01 12:00:00')
+INSERT INTO "Notified_For" VALUES(1, 4, '1900-01-01 10:00:00')
+INSERT INTO "Notified_For" VALUES(2, 1, '1900-01-01 04:00:00')
+INSERT INTO "Notified_For" VALUES(2, 2, '1900-01-01 03:00:00')
+INSERT INTO "Notified_For" VALUES(3, 1, '1900-01-01 05:00:00')
+INSERT INTO "Notified_For" VALUES(3, 2, '1900-01-01 10:00:00')
+INSERT INTO "Notified_For" VALUES(3, 3, '1900-01-01 12:00:00')
+INSERT INTO "Notified_For" VALUES(3, 4, '1900-01-01 23:00:00')
+INSERT INTO "Notified_For" VALUES(5, 3, '1900-01-01 07:00:00')
+INSERT INTO "Notified_For" VALUES(5, 4, '1900-01-01 09:00:00')
