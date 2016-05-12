@@ -83,6 +83,7 @@ class CreateContactForm(Form):
     is_phone = SelectField('Contact type?', validators=[DataRequired()], choices=[('0', 'Email'), ('1', 'Phone')],
                          coerce=str)
     contact = StringField('Contact', validators=[DataRequired()])
+    player = SelectField('Player', validators=[DataRequired()])
     submit = SubmitField('Create contact')
 
 
@@ -293,11 +294,17 @@ def join_team(player):
     return render_template('join-team.html', form=form)
 
 
-@app.route('/contacts/<player>/create', methods=['GET', 'POST'])
-def create_contact(player):
+@app.route('/contacts/create', methods=['GET', 'POST'])
+def create_contact():
     form = CreateContactForm()
+    all_players = get_all_players()
+    players_list = []
+    for player in all_players:
+        full_name = str(player['first_name']) + ' ' + str(player['last_name'])
+        players_list.append((str(player['email']), full_name))
+    form.player.choices = players_list
     if form.validate_on_submit():
-        success, contact_id = add_contact(player, form.is_phone.data, form.contact.data)
+        success, contact_id = add_contact(form.player.data, form.is_phone.data, form.contact.data)
         if success:
             print("Contact_id", contact_id)
             flash('Contact added!', category='success')
@@ -315,8 +322,9 @@ def edit_notifications(contact_id):
     event_types = get_event_types()
     type_list = []
     for e_type in event_types:
-        type_list.append((e_type['typeid'], e_type['description']))
+        type_list.append((str(e_type['typeid']), str(e_type['description'])))
     form.type.choices = type_list
+    print form.type.choices
     if form.validate_on_submit():
         print("Validated")
         exists = setting_exists(contact_id, form.type.data)[0][0]
@@ -331,6 +339,7 @@ def edit_notifications(contact_id):
             flash('You\'re seriously screwed', category='danger')
             return render_template('edit-notifications.html', form=form)
     else:
+        flash('crap', category='danger')
         return render_template('edit-notifications.html', form=form)
 
 

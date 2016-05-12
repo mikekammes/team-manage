@@ -27,15 +27,15 @@
             <form method="POST" class="form-box">
                 <div class="row">{{ form.hidden_tag() }}</div>
                 <div class="row">
-                    <div class="col-xs-6 ">
-                        {{ form.is_phone.label }}
-                    </div>
+                    <div class="col-xs-6 ">{{ form.player.label }}</div>
+                    <div class="col-xs-6 ">{{ form.player() }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 ">{{ form.is_phone.label }}</div>
                     <div class="col-xs-6 ">{{ form.is_phone() }}</div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-6 ">
-                        {{ form.contact.label }}
-                    </div>
+                    <div class="col-xs-6 ">{{ form.contact.label }}</div>
                     <div class="col-xs-6 ">{{ form.contact() }}</div>
                 </div>
                 <div class="row">
