@@ -257,7 +257,6 @@ def rsvp(event_id):
     for email in team_emails:
         email_list.append((email['email'], email['email']))
     form.email.choices = email_list
-    print(form.email.choices)
     if form.validate_on_submit():
         success = RSVP(event_id, form.email.data, form.attending.data)
         if success == 1:
@@ -278,21 +277,16 @@ def join_team(player):
     for team in teams:
         team_list.append((str(team['teamid']), str(team['name'])))
     form.team.choices = team_list
-    print(form.team.choices)
     if form.validate_on_submit():
-        print("Validating")
-        print(player, int(form.team.data), form.accept.data)
         success = accept_invite(player, int(form.team.data), int(form.accept.data))
         if success == 1:
             flash("Saved!", category='success')
             return render_template('base.html')
         else:
-            print("Working")
             flash('Failed', category='danger')
             return render_template('join-team.html', form=form)
     else:
         flash("Dang it", category='danger')
-    print("Not validating")
     return render_template('join-team.html', form=form)
 
 
@@ -308,7 +302,6 @@ def create_contact():
     if form.validate_on_submit():
         success, contact_id = add_contact(form.player.data, form.is_phone.data, form.contact.data)
         if success:
-            print("Contact_id", contact_id)
             flash('Contact added!', category='success')
             return redirect(url_for('edit_notifications', contact_id=contact_id))
         else:
