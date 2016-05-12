@@ -7,9 +7,9 @@ from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 from dbfunctions import open_db_connection, close_db_connection, add_event, get_all_events, get_event_for_user, \
     add_team, get_all_players, get_players_for_team, add_player_and_invite, create_user, get_all_teams, get_usersname, \
-    create_rsvp, get_emails_from_team, RSVP, delete_event, get_team_invites, accept_invite, player_exists, \
+    create_rsvp, get_emails_from_team, update_rsvp, delete_event, get_team_invites, accept_invite, player_exists, \
     player_plays_for_team, invite_player, add_contact, get_event_types, setting_exists, create_setting,  update_setting\
-    , get_contact_text
+    , get_contact_text, rsvp_exists
 
 now = datetime.datetime.now()
 
@@ -63,17 +63,12 @@ class GetTeamPlayersForm(Form):
 
 class RSVPForm(Form):
     email = SelectField('Email', validators=[DataRequired()], choices=[])
-    #email = StringField('TeamID', validators=[DataRequired()])
-    #accept = SelectField('Do you want to play?', validators=[DataRequired()], choices=[(0, 'No'), (1, 'Yes')],
-    #                                         coerce=str)
     attending = SelectField('Are you attending?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')],
                     coerce=str)
     submit = SubmitField('RSVP')
 
 
 class JoinTeamForm(Form):
-    #team = StringField('TeamID', validators=[DataRequired()])
-    #accept = IntegerField('Accept', validators=[DataRequired()])
     team = SelectField('Team', validators=[DataRequired()], choices=[])
     accept = SelectField('Do you want to play?', validators=[DataRequired()], choices=[('0', 'No'), ('1', 'Yes')],
                          coerce=str)
@@ -90,7 +85,7 @@ class CreateContactForm(Form):
 
 class NotificationForm(Form):
     type = SelectField('Event Type', validators=[DataRequired()], choices=[])
-    time = DateTimeField('Advance Notice (In Minutes)', validators=[DataRequired()], format='%M',)
+    time = DateTimeField('Advance Notice (In Hours)', validators=[DataRequired()], format='%H',)
     submit = SubmitField('Set settings')
 
 
@@ -124,9 +119,6 @@ def create_event():
                                       form.location.data)
         if success:
             flash('Event added!', category='success')
-            team_players = get_players_for_team(str(form.team.data))
-            for player in team_players:
-                create_rsvp(player['Email'], event_id)
             return render_template('base.html')
         else:
             flash('You\'re seriously screwed', category='danger')
@@ -238,13 +230,17 @@ def sign_up():
     form = SignUpForm()
 
     if form.validate_on_submit():
-        success = create_user(form.email.data, form.fname.data, form.lname.data)
-        if success:
-            flash('Successful sign up!', category='success')
-            return render_template('base.html')
-        else:
-            flash('You\'re seriously screwed', category='danger')
+        if player_exists(form.email.data)[0][0]:
+            flash('Player exists with that email!', category='danger')
             return render_template('sign-up.html', form=form)
+        else:
+            success = create_user(form.email.data, form.fname.data, form.lname.data)
+            if success:
+                flash('Successful sign up!', category='success')
+                return render_template('base.html')
+            else:
+                flash('You\'re seriously screwed', category='danger')
+                return render_template('sign-up.html', form=form)
     else:
         return render_template('sign-up.html', form=form)
 
@@ -258,7 +254,10 @@ def rsvp(event_id):
         email_list.append((email['email'], email['email']))
     form.email.choices = email_list
     if form.validate_on_submit():
-        success = RSVP(event_id, form.email.data, form.attending.data)
+        if rsvp_exists(form.email.data, event_id)[0][0]:
+            success = update_rsvp(event_id, form.email.data, form.attending.data)
+        else:
+            success = create_rsvp(event_id, form.email.data, form.attending.data)
         if success == 1:
             flash("RSVP submitted successfully!", category='success')
             return render_template('base.html')
@@ -285,8 +284,6 @@ def join_team(player):
         else:
             flash('Failed', category='danger')
             return render_template('join-team.html', form=form)
-    else:
-        flash("Dang it", category='danger')
     return render_template('join-team.html', form=form)
 
 

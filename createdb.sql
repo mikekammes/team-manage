@@ -54,13 +54,6 @@ CREATE TABLE Contact (
   isPhone Boolean NOT NULL
 );
 
-DROP TABLE IF EXISTS Uses;
-CREATE TABLE Uses (
-  Email INTEGER REFERENCES User(Email),
-  ContactID INTEGER REFERENCES Contact(ContactID),
-  PRIMARY KEY (Email, ContactID)
-);
-
 DROP TABLE IF EXISTS Equipment;
 CREATE TABLE Equipment (
   EquipmentID Integer PRIMARY KEY,

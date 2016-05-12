@@ -50,7 +50,7 @@ def get_event_for_user(email):
             NATURAL JOIN Attending_Event
           GROUP BY EventID
         )
-        WHERE TeamID IN (SELECT TeamID FROM Plays_For WHERE Email = :email);
+        WHERE TeamID IN (SELECT TeamID FROM Plays_For WHERE Email = :email AND Joined);
     '''
     cursor = g.db.execute(query, {'email': email})
     g.db.commit()
@@ -98,16 +98,6 @@ def get_players_for_team(team_id):
     cursor = g.db.execute(query, {'team_id': team_id})
     g.db.commit()
     return cursor.fetchall()
-
-
-def create_rsvp(email, event_id):
-    cursor = g.db.cursor()
-    user_query = '''
-            INSERT INTO Attending_Event (Email, EventID, Attending) VALUES (:email, :eventid, NULL )
-        '''
-    cursor.execute(user_query, {'email': email, 'eventid': event_id})
-    g.db.commit()
-    return cursor.rowcount
 
 
 def delete_event(event_id):
@@ -213,7 +203,29 @@ def get_emails_from_team(event_id):
     return cursor.fetchall()
 
 
-def RSVP(event_id, email, attending_status):
+def rsvp_exists(email, event_id):
+    cursor = g.db.execute('SELECT COUNT(*) FROM Attending_Event WHERE Email = :email AND EventID = :event_id',
+                          {'email': email, 'event_id': event_id})
+    g.db.commit()
+    return cursor.fetchall()
+
+
+def create_rsvp(event_id, email, attending_status):
+    cursor = g.db.cursor()
+    if attending_status == '0':
+        query = '''
+            INSERT INTO attending_event (Email, EventID, Attending) VALUES (:email, :eventid, NULL)
+        '''
+    else:
+        query = '''
+            INSERT INTO attending_event (Email, EventID, Attending) VALUES (:email, :eventid, :attending )
+        '''
+    cursor.execute(query, {'email': email, 'eventid': event_id, 'attending': attending_status})
+    g.db.commit()
+    return cursor.rowcount
+
+
+def update_rsvp(event_id, email, attending_status):
     if attending_status == '0':
         query = '''
             UPDATE attending_event SET Attending = NULL WHERE EventID = :event_id AND Email = :email
